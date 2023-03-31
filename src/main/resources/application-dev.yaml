@@ -1,0 +1,4 @@
+integration:
+  omdbapi:
+    key: 34f01399
+    url: http://www.omdbapi.com

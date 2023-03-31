@@ -1,0 +1,30 @@
+spring:
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+  application:
+    name: movies-battle
+  profiles:
+    active: dev
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+    context-path: /api
+
+springdoc:
+  swagger-ui:
+    config-url: ${server.servlet.context-path}${springdoc.api-docs.path}/swagger-config
+    urls:
+      - url: ${server.servlet.context-path}${springdoc.api-docs.path}
+        name: root
+    path: /public/swagger-ui
+  api-docs:
+    path: /public/api-docs
+
+jwt:
+  secret: movies-battle-secret
