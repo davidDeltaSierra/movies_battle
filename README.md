@@ -8,6 +8,10 @@ Desafio técnico para professor na Ada
 * Spring boot 3.5
 * JWT (auth0)
 
+## Documentação
+* O projeto está documentado com Swagger
+* http://localhost:8080/api/public/swagger-ui/index.html
+
 ## Inicialização
 
 #### Durante a inicialização o projeto adiciona 3 usuários

@@ -25,11 +25,15 @@ import static java.util.Objects.isNull;
 public class Quiz extends AbstractEntity {
     @Column
     @Builder.Default
-    private int points = 0;
+    private int hits = 0;
 
     @Column
     @Builder.Default
     private int errors = 0;
+
+    @Column(name = "hit_percent")
+    @Builder.Default
+    private double hitPercent = 0;
 
     @Column(name = "registration_date", nullable = false, updatable = false)
     @Builder.Default
@@ -37,8 +41,7 @@ public class Quiz extends AbstractEntity {
 
     @Column
     @Builder.Default
-    @Enumerated(EnumType.STRING)
-    private QuizStatus status = QuizStatus.STARTED;
+    private boolean finalized = false;
 
     @JoinColumn(nullable = false, name = "id_owner")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -72,5 +75,10 @@ public class Quiz extends AbstractEntity {
         }
         return getRounds().stream()
                 .anyMatch(it -> it.getTitle1().equals(imdbID) || it.getTitle2().equals(imdbID));
+    }
+
+    public double calculateHitPercent() {
+        var total = hits + errors;
+        return (100.0 / total) * hits;
     }
 }

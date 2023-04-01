@@ -10,6 +10,7 @@ public record QuizSender(
         Long quizId,
         int errors,
         int hits,
+        double hitPercent,
         TitleResponse option1,
         TitleResponse option2
 ) {

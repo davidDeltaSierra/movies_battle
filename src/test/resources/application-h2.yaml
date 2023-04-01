@@ -1,0 +1,4 @@
+integration:
+  omdbapi:
+    key: h2-key
+    url: http://www.omdbapi.com

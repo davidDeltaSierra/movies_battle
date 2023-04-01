@@ -10,8 +10,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.io.IOException;
 import java.util.List;
 
-import static java.util.Optional.ofNullable;
-
 @Slf4j
 @RequiredArgsConstructor
 class JwtAuthFilter implements Filter {
@@ -26,12 +24,7 @@ class JwtAuthFilter implements Filter {
     private void auth(ServletRequest servletRequest) {
         try {
             var request = (HttpServletRequest) servletRequest;
-            var ip = ofNullable(request.getHeader("X-Forwarded-For"))
-                    .orElse(request.getRemoteAddr());
-            log.info("Auth attempt with ip: {}", ip);
-            var token = ofNullable(request.getHeader("Authorization"))
-                    .orElseThrow(() -> new RuntimeException("Missing token"));
-            var jwtPayload = jwtHandler.decode(token);
+            var jwtPayload = jwtHandler.decode(request.getHeader("Authorization"));
             log.info("Auth success: {}", jwtPayload);
             SecurityContextHolder.getContext().setAuthentication(
                     new UsernamePasswordAuthenticationToken(
