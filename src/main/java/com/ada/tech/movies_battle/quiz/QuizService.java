@@ -2,6 +2,7 @@ package com.ada.tech.movies_battle.quiz;
 
 import com.ada.tech.movies_battle.integration.OmdbApiClient;
 import com.ada.tech.movies_battle.integration.TitleResponse;
+import com.ada.tech.movies_battle.integration.TitleSearchResponse;
 import com.ada.tech.movies_battle.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,12 +12,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import static java.util.Optional.ofNullable;
 
 @Slf4j
 @Service
@@ -33,17 +33,25 @@ public class QuizService implements CommandLineRunner {
     @Override
     public void run(String... args) {
         TITLES = Stream.of(
-                        omdbApiClient.findAllTitleByTerm("the twilight saga").getBody().search().stream(),
-                        omdbApiClient.findAllTitleByTerm("the avengers").getBody().search().stream(),
-                        omdbApiClient.findAllTitleByTerm("star wars").getBody().search().stream(),
-                        omdbApiClient.findAllTitleByTerm("john wick").getBody().search().stream(),
-                        omdbApiClient.findAllTitleByTerm("matrix").getBody().search().stream(),
-                        omdbApiClient.findAllTitleByTerm("mad max").getBody().search().stream()
+                        findStreamOfTitle("the twilight saga"),
+                        findStreamOfTitle("the avengers"),
+                        findStreamOfTitle("star wars"),
+                        findStreamOfTitle("john wick"),
+                        findStreamOfTitle("matrix"),
+                        findStreamOfTitle("mad max")
                 )
                 .parallel()
                 .flatMap(stream -> stream)
                 .toList();
         log.info("Load titles: {}", TITLES.size());
+    }
+
+    private Stream<TitleResponse> findStreamOfTitle(String title) {
+        return ofNullable(omdbApiClient.findAllTitleByTerm(title))
+                .flatMap(it -> ofNullable(it.getBody()))
+                .map(TitleSearchResponse::search)
+                .stream()
+                .flatMap(Collection::stream);
     }
 
     public QuizSender start() {
@@ -140,7 +148,7 @@ public class QuizService implements CommandLineRunner {
 
     private Pair<TitleResponse, TitleResponse> randomPair() {
         var random = new Random();
-        Supplier<Integer> getIndex = () -> random.nextInt(TITLES.size() - 1);
+        Supplier<Integer> getIndex = () -> random.nextInt(TITLES.size());
         int random1 = getIndex.get();
         int random2 = getIndex.get();
         while (random2 == random1) {

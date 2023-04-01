@@ -5,5 +5,5 @@ public interface RankingView {
 
     String getUsername();
 
-    Long getTotal();
+    long getTotal();
 }
